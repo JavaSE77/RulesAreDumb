@@ -1,0 +1,19 @@
+#"JavaSE.rules.reload" for /rules reload
+#Use %player% to get the players name.
+acceptCommands:
+  - give javase diamond 1
+acceptBroadcast: 'This is a &1colored message %player%'
+acceptMessage: 'This message is sent to you only'
+linesPerPage: 10
+#increase this number every time you update the rules. Players with a verion < this number will be prompted to reaccept
+rulesVersion: 1
+#this is the message sent to players if they try and accept again
+invalidAccept: '&5You have already accepted the rules. Thank you.'
+#This is the message that a player will get when they join if they have an outdated rules accept.
+outdatedRulesMessage: '&4The rules have been updated! Please read the updated &6/rules&4. Type &6/rules accept&4 to remove this message'
+#This is the message that the player will get sent when they accept the rules a second time. 
+secondAcceptMessage:  '&9Thank you for accepting the updated the rules.' 
+#These will be run if the player has already accepted the rules once.
+acceptTwiceCommands:
+  - give javase iron 1
+acceptTwiceBroadcast: 'This is a &1colored message %player%'

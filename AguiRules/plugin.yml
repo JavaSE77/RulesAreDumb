@@ -1,0 +1,14 @@
+main: club.hardcoreminecraft.javase.RAD.main
+name: RAD
+description: Rules Are Dumb!
+author: JavaSE
+version: 1.0.0
+loadbefore: [Essentials]
+commands:
+  rules:
+    description: See the servers rules. No permission required
+  erules:
+    description: See the servers rules. No permission required
+permissions:
+  JavaSE.rules.reload:
+    default: op
