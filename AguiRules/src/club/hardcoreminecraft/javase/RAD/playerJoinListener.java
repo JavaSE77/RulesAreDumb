@@ -44,11 +44,18 @@ public class playerJoinListener implements Listener {
 	    FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 		double playerVersion = users.getDouble(player.getUniqueId() + "");
 		double version = config.getDouble("rulesVersion");
-		if(playerVersion == 0) return;
+		
+		if(playerVersion == 0) {
+			String message = config.getString("neverAccepted");
+			if(message != null && !message.isEmpty())
+			player.sendMessage(message.replaceAll("&", "§"));
+			return;
+		}
 
 		
 		if(version > playerVersion) {
 			String message = config.getString("outdatedRulesMessage");
+			if(message != null && !message.isEmpty())
 			player.sendMessage(message.replaceAll("&", "§"));
 
 		}

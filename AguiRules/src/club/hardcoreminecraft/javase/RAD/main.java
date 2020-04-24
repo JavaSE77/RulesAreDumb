@@ -54,9 +54,9 @@ public class main extends JavaPlugin {
 
 		/*
 		 * This line lets you send out information to the console. In this case it would
-		 * say: Yay, Template-Plugin is now enabled!
+		 * This line should inform the user where they can download updates
 		 */
-		this.getLogger().info("Rules plugin, created by JavaSE");
+		this.getLogger().info("Awesome rules plugin that uses cool threads. Check out my github! https://github.com/JavaSE77/RulesAreDumb");
 	}
 
 
@@ -85,10 +85,13 @@ public class main extends JavaPlugin {
 		    File usersFile = new File(main.plugin.getDataFolder(), "users.yml");
 		    YamlConfiguration.loadConfiguration(usersFile);
 		    
-			sender.sendMessage(ChatColor.LIGHT_PURPLE + "reloaded");
+			sender.sendMessage(ChatColor.LIGHT_PURPLE + "The rules have been reloaded");
 
 			return true;
-		} else { sender.sendMessage(ChatColor.DARK_RED + "JavaSE has personally forbidden you from using this command.");
+		} else { 
+			String noPerms = getConfig().getString("ErrorNoPerms");
+			if(noPerms != null && !noPerms.isEmpty())
+			sender.sendMessage(noPerms.replaceAll("&", "§"));
 		return true;
 		}
 		} 
@@ -149,12 +152,7 @@ public class main extends JavaPlugin {
 		  
 		  
 		  if(!file.exists())
-			try {
-				file.createNewFile();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			  documentHandler.createNewRulesFile(file);
 		  
 		  
 		  //At this point we assume that the file exists, and if it does not, we already created it.
@@ -217,6 +215,7 @@ public class main extends JavaPlugin {
 	    if(playerVersion >= rulesVersion) {
 
 	    	String invalid = getConfig().getString("invalidAccept");
+	    	if(invalid != null && !invalid.isEmpty())
 	    	player.sendMessage(invalid.replaceAll("&", "§"));
 	    	return;
 	    }
@@ -262,6 +261,7 @@ public class main extends JavaPlugin {
 		
 		List<String> list = getConfig().getStringList("acceptTwiceCommands");
 		for (String string : list) {
+		if(string != null && !string.isEmpty())
 		Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), string.replaceAll("%player%", player.getName()));
 		
 	}

@@ -1,6 +1,6 @@
 main: club.hardcoreminecraft.javase.RAD.main
-name: RAD
-description: Rules Are Dumb!
+name: AsyncRules
+description: Rules Are Dumb! Never waste server resources fetching them.
 author: JavaSE
 version: 1.0.0
 loadbefore: [Essentials]
