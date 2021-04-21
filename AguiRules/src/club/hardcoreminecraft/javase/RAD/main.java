@@ -78,22 +78,7 @@ public class main extends JavaPlugin {
 		   § <- Minecraft color code symbol or use chat_color
 		*/
 		if(args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-			if(sender.hasPermission("JavaSE.rules.reload")) {
-		
-
-			reloadConfig();
-		    File usersFile = new File(main.plugin.getDataFolder(), "users.yml");
-		    YamlConfiguration.loadConfiguration(usersFile);
-		    
-			sender.sendMessage(ChatColor.LIGHT_PURPLE + "The rules have been reloaded");
-
-			return true;
-		} else { 
-			String noPerms = getConfig().getString("ErrorNoPerms");
-			if(noPerms != null && !noPerms.isEmpty())
-			sender.sendMessage(noPerms.replaceAll("&", "§"));
-		return true;
-		}
+			return reloadCommand(sender);
 		} 
 		
 		if(sender instanceof Player) {
@@ -110,8 +95,7 @@ public class main extends JavaPlugin {
 				final Player player = (Player) sender;
 				
 				final String index;
-				if(args.length == 0) {index = null;} else index = args[0];
-				
+				if(args.length == 0) {index = null;} else index = args[0];	
 				
 				Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 				    @Override
@@ -122,23 +106,41 @@ public class main extends JavaPlugin {
 				});
 				  
 				  }
-				
-				
-			
-			
 	
 			//Check if the type of sender is a player
 		} else sender.sendMessage(ChatColor.RED +"This command can only be used by players. ");
 		return false;
 
 	}
+
+
+
+
+
+
+
+	private boolean reloadCommand(CommandSender sender) {
+		if(sender.hasPermission("JavaSE.rules.reload")) {
+
+
+		reloadConfig();
+		File usersFile = new File(main.plugin.getDataFolder(), "users.yml");
+		YamlConfiguration.loadConfiguration(usersFile);
+		
+		sender.sendMessage(ChatColor.LIGHT_PURPLE + "The rules have been reloaded");
+
+		return true;
+		} else { 
+			String noPerms = getConfig().getString("ErrorNoPerms");
+			if(noPerms != null && !noPerms.isEmpty())
+				sender.sendMessage(noPerms.replaceAll("&", "§"));
+			return true;
+		}
+	}
 	
 	
 	public void threadRules(Player player, String index) {  
 
-		
-		
-		
 		//setup the path to the file
 		  String filePath = plugin.getDataFolder() + "";
 		  
@@ -184,33 +186,59 @@ public class main extends JavaPlugin {
 			
 			 br.close();
 			 
-			 if(!wasSent)
-				 player.sendMessage(ChatColor.DARK_RED + "Sorry, that page of rules does not exist.");
+			 setWasSentToFile(player, wasSent);
 				
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
-		  
-		 
-		  
-		  
 		
-		
-		
-		}  
+		}
+
+
+
+
+
+
+
+	private void setWasSentToFile(Player player, boolean wasSent) {
+		if(wasSent) {
+			 //set the read version for the player
+			 File usersFile = new File(main.plugin.getDataFolder(), "users.yml");
+		     FileConfiguration users = YamlConfiguration.loadConfiguration(usersFile);
+			 double rulesVersion = getConfig().getDouble("rulesVersion");
+			    //Try to set the userdata to be equal to the current rules version
+			    try {
+					users.set( player.getUniqueId()+"Read", rulesVersion);
+					users.save(usersFile);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		 }else 
+			 player.sendMessage(ChatColor.DARK_RED + "Sorry, that page of rules does not exist.");
+	}  
 	
 	//This function is called when a player accepts the rules
 	public void acceptRules(Player player) {
-		
 
 	    File usersFile = new File(main.plugin.getDataFolder(), "users.yml");
 	    FileConfiguration users = YamlConfiguration.loadConfiguration(usersFile);
 	    
-	  
 	    //Check if the user has already accepted the rules.
 	    double rulesVersion = getConfig().getDouble("rulesVersion");
 	    double playerVersion = users.getDouble( player.getUniqueId()+"");
+	    //There was an error were the user could accept rules without reading them
+	    double playerVersionRead = users.getDouble( player.getUniqueId()+"Read");
+	    
+	    if(playerVersionRead < rulesVersion) {
+	    	//player has not read the rules
+
+	    	String invalid = getConfig().getString("invalidRead");
+	    	if(invalid != null && !invalid.isEmpty())
+	    	player.sendMessage(invalid.replaceAll("&", "§"));
+	    	return;
+	    }
 	    
 	    if(playerVersion >= rulesVersion) {
 
